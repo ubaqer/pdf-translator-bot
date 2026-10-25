@@ -1,0 +1,46 @@
+name: Run PDF Translator Bot
+
+on:
+  workflow_dispatch:
+    inputs:
+      duration_minutes:
+        description: 'مدة تشغيل البوت بالدقائق'
+        required: true
+        default: '60'
+        type: choice
+        options:
+          - '30'
+          - '60'
+          - '120'
+          - '180'
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Start Telegram Bot
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          BOT_OWNER_ID: ${{ secrets.BOT_OWNER_ID }}
+          MAX_PDF_PAGES: '120'
+        run: |
+          echo "Bot started for ${{ github.event.inputs.duration_minutes }} minutes..."
+          timeout ${{ github.event.inputs.duration_minutes }}m python bot.py || true
+          echo "Bot stopped automatically."
