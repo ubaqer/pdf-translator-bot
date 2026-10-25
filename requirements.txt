@@ -1,0 +1,13 @@
+pymupdf
+reportlab
+google-genai
+python-bidi
+arabic-reshaper
+python-docx
+python-pptx
+pyTelegramBotAPI==4.15.4
+python-dotenv==1.0.1
+Flask==3.0.3
+Pillow
+pydantic
+requests
